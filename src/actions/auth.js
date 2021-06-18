@@ -46,8 +46,6 @@ export const startChecking = () => {
         const resp = await fetchConToken( 'auth/renew' );
         const body = await resp.json();
 
-        console.log(body);
-
         if(body.ok) {
             localStorage.setItem('token', body.token);
             localStorage.setItem('token-init-date', new Date().getTime());
@@ -57,9 +55,15 @@ export const startChecking = () => {
                 name: body.name
             }))
         } else {
-            Swal.fire('Error', body.msg, 'error');
             dispatch(checkingFinish());
         }
+    }
+}
+
+export const startLogout = () => {
+    return (dispatch) => {
+        localStorage.clear();
+        dispatch(logout());
     }
 }
 
@@ -70,4 +74,8 @@ const checkingFinish =() => ({
 const login = (user) => ({
     type: types.authLogin,
     payload: user
+})
+
+const logout = () => ({
+    type: types.authLogout
 })
