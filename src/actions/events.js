@@ -52,26 +52,14 @@ export const eventStartUpdating = ( event ) => {
 
         try {
 
-            // const {uid} = getState().auth;
-            // const euid = event.user._id; 
-
-            // console.log(uid);
-            // console.log(euid);
-
-            // if (uid !== euid) {
-            //     return Swal.fire('Error', )
-            // }
-
-            const resp = await fetchConToken('events', event, 'PUT');
+            const resp = await fetchConToken(`events/${event.id}`, event, 'PUT');
             const body = await resp.json();
 
             if (body.ok) {
-                const event = body.event;
                 dispatch(eventUpdated(event));
             } else {
                 Swal.fire('Error', body.msg, 'error')
             }
-
 
         } catch (error) {
             console.log(error);
@@ -84,6 +72,31 @@ const eventUpdated = ( event ) => ({
     payload: event
 });
 
+//fetch start deleting
+
+export const eventStartDeleting = ( event ) => {
+    return async (dispatch) => {
+
+        try {
+
+            console.log(event);
+
+            const resp = await fetchConToken(`events/${event.id}`, event, 'DELETE');
+            const body = await resp.json();
+
+            if (body.ok) {
+                dispatch(eventDeleted(event));
+                eventClearActiveEvent()
+            } else {
+                Swal.fire('Error', body.msg, 'error')
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+};
+
 export const eventDeleted = () => ({ type: types.eventDeleted });
 
 export const eventStartLoading = () => {
@@ -93,7 +106,6 @@ export const eventStartLoading = () => {
             const resp = await fetchConToken('events')
             const body = await resp.json();
             const events = prepareEvents( body.eventos );
-            console.log(events);
                 dispatch(eventLoaded(events));
 
         } catch (error) {

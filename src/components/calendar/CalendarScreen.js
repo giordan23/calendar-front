@@ -64,7 +64,6 @@ export const CalendarScreen = () => {
             color: 'white'
         }
 
-
         return {
             style
         }
